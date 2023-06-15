@@ -8,10 +8,27 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 const PORT = process.env.PORT
 
+//if we want to use middleware with every route
+app.use(logger);  //global middleware
+
+//setup middlewares
+function logger(req,res,next){
+    console.log(req.url);
+    console.log(req.body);
+    next();
+}
+
+function isAuthenticated(req,res,next){
+    console.log('Yes User is Authenticated');
+    next();
+}
+
+
 //mimic db using array
 let blogsList = [];
 
-app.get('/blogs',(req,res)=>{
+app.get('/blogs',isAuthenticated,(req,res)=>{
+    console.log("Hitting middleware");
     return res.status(200).json({
         data : blogsList,
         success : true
